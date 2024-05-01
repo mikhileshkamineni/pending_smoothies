@@ -1,5 +1,6 @@
 # Import python packages
 import streamlit as st
+from snowflake.snowpark import Session
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark.functions import col
 from snowflake.snowpark.functions import when_matched
@@ -11,22 +12,25 @@ st.write(
     """
 )
 
-session = get_active_session()
+# Create a session
+session = Session.builder.config_file("snowpark.config.json").create()
+
+# Now you can get the active session
+active_session = get_active_session()
 
 # Commented out unnecessary dropdown for selecting ingredients
-# my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
+# my_dataframe = active_session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 # ingredients_list = st.multiselect ('Choose up to 5 ingredients:', my_dataframe)
 
-my_data_frame = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
-
+my_data_frame = active_session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
 
 editable_df = st.data_editor(my_data_frame) 
 
 submitted = st.button('Submit')
 
 if submitted:
-    og_dataset = session.table("smoothies.public.orders")
-    edited_dataset = session.create_dataframe(editable_df)
+    og_dataset = active_session.table("smoothies.public.orders")
+    edited_dataset = active_session.create_dataframe(editable_df)
     
     try:
         og_dataset.merge(
@@ -40,10 +44,3 @@ if submitted:
 
 else:
     st.success('There are no pending orders right now', icon ="👍" )
-        
-
-
-
-
-
-
