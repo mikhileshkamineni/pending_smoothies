@@ -15,8 +15,7 @@ st.write(
 cnx = st.connection("snowflake")
 session = cnx.session()
 
-# Now you can get the active session
-active_session = get_active_session()
+
 
 # Commented out unnecessary dropdown for selecting ingredients
 # my_dataframe = active_session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
