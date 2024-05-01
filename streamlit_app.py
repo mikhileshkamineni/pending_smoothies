@@ -13,7 +13,8 @@ st.write(
 )
 
 # Create a session
-session = Session.builder.config_file("snowpark.config.json").create()
+cnx = st.connection("snowflake")
+session = cnx.session()
 
 # Now you can get the active session
 active_session = get_active_session()
